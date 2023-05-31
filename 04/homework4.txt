@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="time"></div>
+    <script>
+        var time = prompt("1~10 사이의 정수를 입력하시오");
+        while (isNaN(time) || time <= 0 || time > 10) {
+            time = prompt("잘못된 입력입니다. 1~10 사이의 정수를 입력하시오");
+        }
+        document.querySelector('#time').innerHTML = time;
+        let id = setInterval(() => {
+            time--;
+            document.querySelector('#time').innerHTML = time;
+
+            if (time == 0) {
+                clearInterval(id);
+            }
+        }, 1000);
+
+    </script>
+
+</body>

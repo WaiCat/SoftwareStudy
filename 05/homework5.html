@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>homework5</title>
+    <link rel="stylesheet" href="css/event.css">
+
+    <script>
+
+     var users = []; 
+
+        function submit_chk(myFrom) {
+
+            var name = document.getElementById('user_name').value;
+            var tel = document.getElementById('user_tel').value;
+            let user = { name: name, tel: tel };
+            users.push(user);
+
+            return false;
+        }
+        function reset_chk(myFrom) {
+            document.getElementById('user_name').focus();
+        }
+
+        function show() {
+            document.querySelector('#list').style.display = "block";
+            let list = '';
+            for (let i = 0; i < users.length; i++) {
+                let user = users[i];
+                list += "name : " + user.name + ' ' + "tel : " + user.tel + '<br/>';
+            }
+            document.getElementById('list').innerHTML = list;
+
+        }
+        function hide() {
+            document.querySelector('#list').style.display = "none";
+        }
+    </script>
+
+</head>
+
+<body onload="document.f1.user_name.focus();">
+
+    <form action="#" method="POST" name="f1" onsubmit="return submit_chk(this);" onreset="return reset_chk(this);">
+        <fieldset>
+            <legend> 회원가입</legend>
+            <p>
+                <label for="user_name"> 이름 </label>
+                <input type="text" name="user_name" id="user_name" />
+            </p>
+            <p>
+                <label for="user_name"> 연락처 </label>
+                <input type="text" name="user_tel" id="user_tel" />
+            </p>
+            <p>
+                <input type="submit" value="회원가입" />
+                <input type="reset" value="가입취소" />
+            </p>
+        </fieldset>
+    </form>
+
+    <button id="open" onclick="show()">출력</button>
+    <button id="close" onclick="hide()">지우기</button>
+    <div id="list" class="detail">
+    </div>
+
+</body>
+
+</html>
