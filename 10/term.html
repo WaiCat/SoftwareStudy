@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DOM</title>
+    <style>
+        .form-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<script>
+    var users = [];
+
+    function back() {
+        document.getElementById("sib").style.display = "block";
+        document.getElementById("sub").style.display = "block";
+        document.getElementById("signin").style.display = "none";
+        document.getElementById("signup").style.display = "none";
+    }
+
+    function signup() {
+        document.getElementById("sib").style.display = "none";
+        document.getElementById("sub").style.display = "none";
+        document.getElementById("signin").style.display = "block";
+
+        return false;
+    }
+    function signupfuntion() {
+        var username = document.getElementById("username1").value;
+        var password = document.getElementById("password1").value;
+        console.log(users.length);
+        for (var i = 0; i < users.length; i++) {
+            if (username == users[i].username) {
+                document.getElementById("username1").value = "";
+                document.getElementById("password1").value = "";
+                alert("이미 있는 아이디 입니다. 다시 입력하세요");
+                return false;
+            }
+        }
+        let user = { username: username, password: password };
+        alert("회원가입이 완료되었습니다")
+        users.push(user);
+        back();
+        document.getElementById("username1").value = "";
+        document.getElementById("password1").value = "";
+
+        return false;
+    }
+
+
+    function signin() {
+        document.getElementById("sib").style.display = "none";
+        document.getElementById("sub").style.display = "none";
+        document.getElementById("signup").style.display = "block";
+
+        return false;
+    }
+    function signinfuntion() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        if (username == "admin" && password == "admin") {
+            alert("Admin 계정 로그인")
+            document.querySelector('#user').style.display = "block";
+            document.getElementById("display-username").textContent = username;
+            document.getElementById("display-password").textContent = password;
+        } else {
+            for (var i = 0; i < users.length; i++) {
+                if (username == users[i].username && password == users[i].password) {
+                    document.querySelector('#user').style.display = "block";
+                    document.getElementById("display-username").textContent = username;
+                    document.getElementById("display-password").textContent = password;
+                    alert("로그인 완료");
+                    document.getElementById("username").value = "";
+                    document.getElementById("password").value = "";
+                    return false;
+                }
+            }
+            alert("로그인 실패");
+            back();
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+
+        }
+        return false; // 폼 제출 방지
+    }
+</script>
+
+<body>
+    <button id="sib" onclick="signup()">회원가입</button>
+
+    <button id="sub" onclick="signin()">로그인</button>
+
+    <form id="signin" style="display: none;" onsubmit="return signupfuntion()">
+        <fieldset>
+            <legend> 회원가입</legend>
+            <p>
+                <label for="username1">사용자 이름:</label>
+                <input type="text" id="username1" name="username1" required>
+            </p>
+            <p>
+                <label for="password1">비밀번호:</label>
+                <input type="password" id="password1" name="password1" required>
+            </p>
+            <p>
+                <input type="submit" style="margin-right:20px" value="회원가입">
+                <button onclick="back()">뒤로가기</button>
+            </p>
+        </fieldset>
+    </form>
+
+    <form id="signup" style="display: none;" onsubmit="return signinfuntion()">
+        <fieldset>
+            <legend> 로그인</legend>
+            <p>
+                <label for="username">사용자 이름:</label>
+                <input type="text" id="username" name="username" required>
+            </p>
+            <p>
+                <label for="password">비밀번호:</label>
+                <input type="password" id="password" name="password" required>
+            </p>
+            <p>
+                <input type="submit" value="로그인">
+                <button onclick="back()">뒤로가기</button>
+            </p>
+        </fieldset>
+    </form>
+
+    <div id="user" style="display: none;">
+        <h3>입력된 정보:</h3>
+        <p>아이디: <span id="display-username"></span></p>
+        <p>비밀번호: <span id="display-password"></span></p>
+    </div>
+
+
+    
+</body>
+
+</html>
