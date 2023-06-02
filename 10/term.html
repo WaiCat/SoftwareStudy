@@ -47,7 +47,7 @@
           return false;
         }
       }
-      let user = { username: username, password: password };
+      let user = { username: username, password: password, lectures: [] };
       alert("회원가입이 완료되었습니다");
       users.push(user);
       back();
@@ -107,27 +107,41 @@
         var listItem = $("<p></p>").text(
           "username: " + user.username + " password: " + user.password
         );
+        let fieldset = $("<fieldset></fieldset>");
 
         var button1 = $("<button></button>")
           .text("수강목록")
           .on("click", function () {
-            var originalTag = document.getElementById("originalTag");
-            var clonedTag = originalTag.cloneNode(true); // true를 전달하여 하위 요소도 복제합니다
-
-            // 복제된 태그를 원하는 위치에 추가
-            var targetElement = document.getElementById("targetElement");
-            targetElement.appendChild(clonedTag);
+            console.log(user);
+            fieldset.css("display", "block");
+            for (var j = 0; j < user.lectures.length; j++) {
+              let lec = user.lectures[j];
+              if (!lecs.includes(lec)) {
+                user.lectures.splice(j, 1);
+                continue;
+              }
+              let item = $("<p></p>").text("lecture: " + lec);
+              var button = $("<button></button>")
+                .text("강의 삭제")
+                .data("index", j) // 데이터 인덱스 설정
+                .click(function () {
+                  var index = $(this).data("index");
+                  user.lectures.splice(index, 1);
+                  showusers();
+                });
+              fieldset.append(item, button);
+            }
           });
 
         var button2 = $("<button></button>")
           .text("회원삭제")
           .click(function () {
             var index = $(this).data("index");
-            users.splice(index, 1); // 배열에서 사용자 삭제
-            showusers(); // 변경된 목록 다시 표시
+            users.splice(index, 1);
+            showusers();
           });
 
-        userList.append(listItem, button1, button2);
+        userList.append(listItem, fieldset, button1, button2);
       }
     }
     function showlec() {
@@ -244,32 +258,19 @@
       $("#myleclist").css("display", "none");
       var leclist1 = $("#leclist1");
       leclist1.empty();
+      var username = document.getElementById("username").value;
+      var index = users.findIndex((i) => i.username == username);
       for (let i = 0; i < lecs.length; i++) {
         let lec = lecs[i];
         let listItem = $("<p></p>").text("lecture: " + lec);
         let button = $("<button></button>")
           .text("강의 추가")
           .click(function () {
-            var div = document.getElementById("myleclist");
-            var childNodes = div.childNodes;
-
-            let currentLec = lec;
-            let isDuplicate = false;
-
-            for (let k = 0; k < childNodes.length; k++) {
-              var childNode = childNodes[k].textContent;
-              console.log(childNode);
-
-              if (childNode.includes(currentLec)) {
-                isDuplicate = true;
-                break;
-              }
-            }
-
-            if (isDuplicate) {
-              alert("이미 있는 강의입니다");
+            if (!users[index].lectures.includes(lec)) {
+              users[index].lectures.push(lec);
+              console.log(users[index].lectures);
             } else {
-              add(currentLec);
+              alert("이미 있는 과목입니다.");
             }
           });
 
@@ -279,36 +280,29 @@
     function mylecm() {
       $("#myleclist").css("display", "block");
       $("#addmylec").css("display", "none");
-      var div = document.getElementById("myleclist");
-      var childNodes = div.childNodes;
-      var cl = childNodes.length;
-      for (var i = 0; i < cl; i++) {
-        console.log(childNodes);
-        childNode = childNodes[i].textContent;
-        let isDuplicate = true;
-        for (var k = 0; lecs.length > k; k++) {
-          console.log("re");
-          if (childNode.includes(lecs[k])) {
-            isDuplicate = false;
-            break;
-          }
+      var div = $("#myleclists");
+      var username = document.getElementById("username").value;
+      var index = users.findIndex((i) => i.username == username);
+      user = users[index];
+      div.empty();
+
+      console.log(users.lectures);
+      for (var i = 0; i < user.lectures.length; i++) {
+        let lec = user.lectures[i];
+        if (!lecs.includes(lec)) {
+          user.lectures.splice(i, 1);
+          continue;
         }
-        if (isDuplicate) {
-          div.removeChild(childNodes[i]);
-          i--;
-        }
+        let listItem = $("<p></p>").text("lecture: " + lec);
+        var button = $("<button></button>")
+          .text("강의 삭제")
+          .click(function () {
+            var index = $(this).data("index");
+            user.lectures.splice(index, 1);
+            mylecm();
+          });
+        div.append(listItem, button);
       }
-    }
-    function add(lec) {
-      console.log(lec);
-      var d = $("#myleclist");
-      var listItem = $("<p></p>").text(lec);
-      deleteButton = $("<button></button>")
-        .text("강의 삭제")
-        .click(function () {
-          $(this).parent().remove(); // 부모 요소인 <p> 태그를 삭제
-        });
-      d.append(listItem.append(deleteButton));
     }
   </script>
 
@@ -319,39 +313,39 @@
 
     <fieldset id="signin">
       <legend>회원가입</legend>
-      <p>
-        <label for="username1">사용자 이름:</label>
-        <input type="text" id="username1" name="username1" required />
-      </p>
-      <p>
-        <label for="password1">비밀번호:</label>
-        <input type="password" id="password1" name="password1" required />
-      </p>
-      <p>
-        <input
-          type="submit"
-          style="margin-right: 20px"
-          value="회원가입"
-          onclick="signupfuntion()"
-        />
-        <input type="reset" value="뒤로가기" onclick="back()" />
-      </p>
+      <form onsubmit="signupfuntion(); return false;">
+        <p>
+          <label for="username1">사용자 이름:</label>
+          <input type="text" id="username1" name="username1" required />
+        </p>
+        <p>
+          <label for="password1">비밀번호:</label>
+          <input type="password" id="password1" name="password1" required />
+        </p>
+        <p>
+          <input type="submit" style="margin-right: 20px" value="회원가입" />
+          <input type="reset" value="뒤로가기" onclick="back()" />
+        </p>
+      </form>
     </fieldset>
+
     <div id="login">
       <fieldset id="signup">
         <legend>로그인</legend>
-        <p>
-          <label for="username">사용자 이름:</label>
-          <input type="text" id="username" name="username" required />
-        </p>
-        <p>
-          <label for="password">비밀번호:</label>
-          <input type="password" id="password" name="password" required />
-        </p>
-        <p>
-          <input type="submit" value="로그인" onclick="signinfuntion()" />
-          <input type="reset" value="뒤로가기" onclick="back()" />
-        </p>
+        <form onsubmit="signinfuntion(); return false;">
+          <p>
+            <label for="username">사용자 이름:</label>
+            <input type="text" id="username" name="username" required />
+          </p>
+          <p>
+            <label for="password">비밀번호:</label>
+            <input type="password" id="password" name="password" required />
+          </p>
+          <p>
+            <input type="submit" value="로그인" style="margin-right: 20px" />
+            <input type="reset" value="뒤로가기" onclick="back()" />
+          </p>
+        </form>
       </fieldset>
 
       <fieldset id="user">
@@ -402,6 +396,7 @@
         </fieldset>
         <fieldset id="myleclist">
           <legend>내 강의</legend>
+          <div id="myleclists"></div>
         </fieldset>
       </div>
     </div>
