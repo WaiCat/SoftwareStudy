@@ -103,45 +103,50 @@
       userList.empty(); // 기존 내용 초기화
 
       for (var i = 0; i < users.length; i++) {
-        var user = users[i];
-        var listItem = $("<p></p>").text(
-          "username: " + user.username + " password: " + user.password
-        );
-        let fieldset = $("<fieldset></fieldset>");
+        (function () {
+          var user = users[i];
+          var listItem = $("<p></p>").text(
+            "username: " + user.username + " password: " + user.password
+          );
+          let fieldset = $("<fieldset></fieldset>");
 
-        var button1 = $("<button></button>")
-          .text("수강목록")
-          .on("click", function () {
-            console.log(user);
-            fieldset.css("display", "block");
-            for (var j = 0; j < user.lectures.length; j++) {
-              let lec = user.lectures[j];
-              if (!lecs.includes(lec)) {
-                user.lectures.splice(j, 1);
-                continue;
+          var button1 = $("<button></button>")
+            .text("수강목록")
+            .on("click", function () {
+              var currentUser = user; // 현재 user 값을 캡처하여 currentUser 변수에 저장
+
+              console.log(currentUser);
+              fieldset.css("display", "block");
+              for (var j = 0; j < currentUser.lectures.length; j++) {
+                let lec = currentUser.lectures[j];
+                if (!lecs.includes(lec)) {
+                  currentUser.lectures.splice(j, 1);
+                  j--;
+                  continue;
+                }
+                let item = $("<p></p>").text("lecture: " + lec);
+                var button = $("<button></button>")
+                  .text("강의 삭제")
+                  .data("index", j) // 데이터 인덱스 설정
+                  .click(function () {
+                    var index = $(this).data("index");
+                    currentUser.lectures.splice(index, 1);
+                    showusers();
+                  });
+                fieldset.append(item, button);
               }
-              let item = $("<p></p>").text("lecture: " + lec);
-              var button = $("<button></button>")
-                .text("강의 삭제")
-                .data("index", j) // 데이터 인덱스 설정
-                .click(function () {
-                  var index = $(this).data("index");
-                  user.lectures.splice(index, 1);
-                  showusers();
-                });
-              fieldset.append(item, button);
-            }
-          });
+            });
 
-        var button2 = $("<button></button>")
-          .text("회원삭제")
-          .click(function () {
-            var index = $(this).data("index");
-            users.splice(index, 1);
-            showusers();
-          });
+          var button2 = $("<button></button>")
+            .text("회원삭제")
+            .click(function () {
+              var index = $(this).data("index");
+              users.splice(index, 1);
+              showusers();
+            });
 
-        userList.append(listItem, fieldset, button1, button2);
+          userList.append(listItem, fieldset, button1, button2);
+        })();
       }
     }
     function showlec() {
@@ -150,16 +155,20 @@
       var leclist = $("#leclist");
       leclist.empty();
       for (var i = 0; i < lecs.length; i++) {
-        var lec = lecs[i];
-        var listItem = $("<p></p>").text("lecture: " + lec);
-        var button = $("<button></button>")
-          .text("강의 삭제")
-          .click(function () {
-            var index = $(this).data("index");
-            lecs.splice(index, 1); // 배열에서 사용자 삭제
-            showlec(); // 변경된 목록 다시 표시
-          });
-        leclist.append(listItem, button);
+        (function () {
+          var index = i;
+          var lec = lecs[index];
+          var listItem = $("<p></p>").text("lecture: " + lec);
+          var button = $("<button></button>")
+            .text("강의 삭제")
+            .data("index", index) // 데이터 인덱스 설정
+            .click(function () {
+              var index = $(this).data("index");
+              lecs.splice(index, 1);
+              showlec();
+            });
+          leclist.append(listItem, button);
+        })();
       }
     }
 
